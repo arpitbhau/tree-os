@@ -4,6 +4,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAppStore from '../../../../store/appStore';
 import { Rnd } from 'react-rnd';
+import { updateCellValue , getColumnValues } from "../../../../supabase/supabaseController.js"
+
+async function addBookmark(name , url) {
+  let oldData = await getColumnValues("bookmarks" , "bookmarks")
+  oldData = oldData[0]
+
+  let response  = await updateCellValue("bookmarks" , "bookmarks" , "refRow" , "ref" , [...oldData , {"name": name , "url": url}])
+
+  if (response) return "Saved the Bookmark"
+  else return "Failed to Save BookMark"
+
+}
+
 
 // Command output mapping
 const COMMANDS = {
@@ -17,7 +30,8 @@ const COMMANDS = {
   cat [file] - Show file contents
   pwd - Print working directory
   uname - Show system information
-  neofetch - Show system info with logo`,
+  neofetch - Show system info with logo
+  bookmark add name:url - set bookmark in the apps`,
   
   "clear": "",
   
@@ -60,7 +74,19 @@ Music        Videos     node_modules  package.json`,
     
     if (!args[0]) return "Error: No file specified";
     return files[args[0]] || `Error: ${args[0]}: No such file or directory`;
+  } ,
+
+  "bookmark": async (args) => {
+  if (args[0] === "add" && args[1]) {
+    const [name, url] = args[1].split(",");
+    if (!name || !url) return "Error: Invalid format. Use bookmark add name,url";
+
+    const result = await addBookmark(name.trim(), url.trim());
+    return result;
   }
+
+  return "Error: Invalid bookmark command. Use `bookmark add name,url`";
+}
 };
 
 function Terminal() {
@@ -121,7 +147,7 @@ function Terminal() {
     return () => clearTimeout(timeout);
   }, []);
 
-  const handleCommand = (e) => {
+  const handleCommand = async e => {
     e.preventDefault();
     if (!currentCommand.trim()) return;
     
@@ -151,11 +177,15 @@ function Terminal() {
 
     // Process command output
     let output;
-    if (COMMANDS[cmd.toLowerCase()]) {
-      if (typeof COMMANDS[cmd.toLowerCase()] === 'function') {
-        output = COMMANDS[cmd.toLowerCase()](args);
-      } else {
-        output = COMMANDS[cmd.toLowerCase()];
+    const commandFn = COMMANDS[cmd.toLowerCase()];
+    if (commandFn) {
+      try {
+        output = typeof commandFn === 'function' 
+          ? await commandFn(args)
+          : commandFn;
+      } catch (err) {
+        output = "Error running command: " + err.message;
+        errorSound.play();
       }
     } else {
       output = `Command not found: ${cmd}. Type 'help' for available commands.`;

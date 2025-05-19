@@ -11,6 +11,8 @@ import Search from './apps/search/Search'
 import Notion from './apps/notion/Notion'
 import NativeEnv from './apps/nativeEnv/NativeEnv'
 import NotFound from '../notFound/NotFound'
+import Bookmarks from './apps/bookmarks/Bookmarks'
+
 
 function Screen() {
   const isAppOpened = useAppStore((state) => state.isAppOpened)
@@ -27,6 +29,7 @@ function Screen() {
           <Route path="spotify/" element={<Spotify />} />
           <Route path='search/' element={<Search />} />
           <Route path='native-env/' element={<NativeEnv />} />
+          <Route path='more-apps/' element={<Bookmarks />} />
           <Route path="/*" element={<NotFound />} />
         </Routes>
     
