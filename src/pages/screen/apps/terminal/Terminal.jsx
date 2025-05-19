@@ -31,7 +31,7 @@ const COMMANDS = {
   pwd - Print working directory
   uname - Show system information
   neofetch - Show system info with logo
-  bookmark add name:url - set bookmark in the apps`,
+  bookmark add name,url - set bookmark in the apps`,
   
   "clear": "",
   
