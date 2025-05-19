@@ -12,12 +12,10 @@ export default function Bookmarks() {
     async function supabaseWork() {
       try {
         const data = await getColumnValues("bookmarks", "bookmarks");
-        console.log("Supabase data:", data[0]);
         
-        // ✅ Check if data is structured like [{ bookmarks: [...] }]
         if (data[0].length > 0) {
           setApps(data[0]);
-          console.log(apps);
+          
         } else if (data[0].length === 0) {
           setApps([
             { "name": "YouTube", "url": "https://youtube.com" },
