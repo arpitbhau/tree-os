@@ -1,7 +1,7 @@
 // Jai Shree Ram
 
 import { img } from 'framer-motion/client';
-import React , { useState } from 'react'
+import React , { useState , useEffect } from 'react'
 
 function Bg() {
 
@@ -15,7 +15,8 @@ function Bg() {
 
 
   // Fetch the image
-  fetch(apiUrl)
+  useEffect(() => {
+    fetch(apiUrl)
     .then(response => {
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.status}`);
@@ -40,6 +41,7 @@ function Bg() {
       console.error('Error fetching wallpaper:', error);
     });
 
+  } , [])
 
 
   return (
