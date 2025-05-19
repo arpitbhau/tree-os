@@ -13,7 +13,7 @@ const NativeEnv = () => {
 
   const handleOpenNativeEnv = () => {
     navigate("/");
-    window.open('https://native-env.vercel.app', '_blank');
+    window.open('https://native-env.onrender.com', '_blank');
     setIsAppOpened(false);
   };
 
