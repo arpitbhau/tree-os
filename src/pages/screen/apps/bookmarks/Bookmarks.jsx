@@ -61,13 +61,29 @@ export default function Bookmarks() {
   const appsPerPage = 18; // Increased from 12 to 18 for more apps per page
   const totalPages = Math.ceil(apps.length / appsPerPage);
   
+  // Improved getFaviconUrl function with fallback mechanism
   const getFaviconUrl = (url) => {
     try {
       const domain = new URL(url).hostname;
+      
+      // Special case for WhatsApp which has known issues
+      if (domain === 'mail.google.com') {
+        throw Error()
+      } 
+      
+      else if (domain === "web.whatsapp.com") {
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAMAAABF0y+mAAAAUVBMVEVHcEz////////////////////////////////////////////////r+u/Z9uL1/fhe24gAzUkf02Sh6LZ+4Z1t3pHG8dMC0Viw7MKQ5apL2HsasPsVAAAADXRSTlMANIfD7f8zYGIW4N4+qsA5tgAAAQdJREFUeAF9k4UWgzAMRYM8vG6j//+hKyfQ+S6WEq9QpWm7Hui7dqB3xh6VfnpRzQteWGeqbPhg+6Or2hkVIVWVOfIKRmpTsA7MQoUJjDchCiVdSpJ/jEXZs6iTrFYs9UQD/3FG4MIn/jbUsmBukNXX7jhoqcPBLR2BPVBHhe5MGcKhDGAE5+iJh3kHoolg1FnSqdRFiZAEIJ6VHHbPKOR0iyYISKM4LBcUeehNskbCZy7oasV6LsX5CHEmb6k5lQ4XymoWBuKkwkjpFGdImXX9sUG47WSS0bvz1uxgJiosALyPCtHnrNm/sL4u9ivz/23yf4Mx84oXlpmemZ439UjvDNdxaOjiDkjvFKpa/ei0AAAAAElFTkSuQmCC"
+      }
+      
+      // Return Google's service as primary source
       return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+      
     } catch (error) {
-      console.error("Invalid URL:", url);
-      return "/api/placeholder/48/48";
+      
+      const domain = new URL(url).hostname;
+      
+      return `https://icons.duckduckgo.com/ip3/${domain}.ico`
+      // return "/api/placeholder/48/48";
     }
   };
 
@@ -110,7 +126,7 @@ export default function Bookmarks() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 p-8 flex flex-col">
+    <div className="min-h-screen overflow-hidden bg-slate-900 p-8 flex flex-col">
       {/* Glass container */}
       <motion.div
         className="w-full h-full flex-grow rounded-lg p-6 bg-slate-800/40 backdrop-blur-md border border-slate-700/50 shadow-xl"
@@ -118,7 +134,7 @@ export default function Bookmarks() {
         animate="visible"
         variants={containerVariants}
       >
-        <motion.div className="grid grid-cols-4 md:grid-cols-6 gap-6 h-3/4 overflow-y-auto py-4">
+        <motion.div className="grid grid-cols-4 md:grid-cols-6 gap-6 h-3/4 py-4">
           {currentApps.map((app, index) => (
             <motion.div
               key={index}
@@ -132,9 +148,16 @@ export default function Bookmarks() {
                 <img
                   src={getFaviconUrl(app.url)}
                   alt={`${app.name} logo`}
-                  className="w-14 h-14 object-contain hover:scale-110 cursor-pointer"
+                  className={`w-14 h-14 object-contain ${app.name.toLowerCase() !== "microsoft" && "rounded-xl"} hover:scale-110 cursor-pointer`}
                   onError={(e) => {
-                    e.target.src = "/api/placeholder/48/48";
+                    // If Google's service fails, try DuckDuckGo instead
+                    const domain = new URL(app.url).hostname;
+                    e.target.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+                    
+                    // If DuckDuckGo also fails, use placeholder
+                    e.target.onerror = () => {
+                      e.target.src = "/api/placeholder/48/48";
+                    };
                   }}
                 />
               </div>
