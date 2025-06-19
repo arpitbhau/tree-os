@@ -12,11 +12,20 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    
+    // some keyboard shortcuts
     const handleKeyDown = (e) => {
       // Check for Host+D (Meta+D on Mac, Windows+D on Windows)
       if ((e.metaKey || e.altKey) && e.key.toLowerCase() === 'd') {
+
         e.preventDefault() // Prevent default browser behavior
         navigate('/')
+
+      } else if ((e.ctrlKey) && e.key.toLowerCase() === 'i') {
+
+        e.preventDefault() // Prevent default browser behavior
+        navigate('/app/search')
+        
       }
     }
 

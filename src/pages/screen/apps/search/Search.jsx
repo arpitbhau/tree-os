@@ -16,9 +16,20 @@ function Search() {
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
-      // Open Google search in new tab
-      navigate("/")
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank')
+
+      if (e.altKey) {
+        // got to domain when ctrl + enter is pressed
+        window.open(`${searchQuery.startsWith("http://") || searchQuery.startsWith("https://") 
+            ? "" 
+            : "https://"}${searchQuery}`, 
+          "_blank"
+        )
+      } 
+      else {
+        // Open Google search in new tab
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, '_blank')
+      }
+      navigate("/") // finally get the tree os to desktop
     }
   }
 
