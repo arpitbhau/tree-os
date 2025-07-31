@@ -89,6 +89,7 @@ export default function Bookmarks() {
 
   const handleOpenApp = (url) => {
     window.open(url, "_blank");
+    navigate("/")
   };
 
   const goToPage = (pageNumber) => {
