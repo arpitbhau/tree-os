@@ -5,11 +5,9 @@ import { motion } from "framer-motion";
 import { getColumnValues } from "../../../../supabase/supabaseController.js"
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate();
-
 
 export default function Bookmarks() {
-
+  const navigate = useNavigate();
   const [apps, setApps] = useState([]);
   
   useEffect(() => {
